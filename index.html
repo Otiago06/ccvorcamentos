@@ -408,7 +408,7 @@ function calculate() {
 
   document.querySelectorAll(".service-check:checked").forEach(el=>{
     const s=config.services[el.dataset.i];
-    lines.push(`${s.name}: ${money(s.price)}`);
+    lines.push(`_${s.name}: ${money(s.price)}_`);
   });
   lines.push(`*Serviços: ${money(serviceTotal)}*`);
   lines.push("");
@@ -416,7 +416,7 @@ function calculate() {
   document.querySelectorAll(".part-check:checked").forEach(el=>{
     const i=Number(el.dataset.i), p=config.parts[i];
     const inp=document.querySelector(`.part-price[data-i="${i}"]`);
-    lines.push(`${p}: ${money(Number(inp?.value)||0)}`);
+    lines.push(`_${p}: ${money(Number(inp?.value)||0)}_`);
   });
   lines.push(`*Peças: ${money(partTotal)}*`);
   lines.push("");
