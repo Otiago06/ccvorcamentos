@@ -38,11 +38,14 @@ button { border:0; border-radius:8px; padding:11px 16px; cursor:pointer; font-we
   .grid,.admin-grid { grid-template-columns:1fr; }
   .admin-item { grid-template-columns:1fr 100px 38px; }
 }
-</style>
+.tabs{display:flex;gap:6px;margin-bottom:18px;border-bottom:1px solid #d9dee5}.tab-button{background:#e8edf2;color:#20252b;border:0;border-radius:8px 8px 0 0;padding:12px 20px;cursor:pointer;font-weight:700}.tab-button.active{background:#1f2937;color:#fff}.tab-content{display:none}.tab-content.active{display:block}.file-button{display:inline-flex;align-items:center;cursor:pointer}.file-button input{display:none}</style>
 </head>
 <body>
 <div class="container">
   <h1>Gerador de Orçamentos</h1>
+  <p class="subtitle">Crie o orçamento e copie o relatório pronto para enviar.</p>
+  <div class="tabs"><button class="tab-button active" onclick="showTab('orcamento', this)">Novo orçamento</button><button class="tab-button" onclick="showTab('cadastro', this)">Cadastro</button></div>
+  <section id="orcamento" class="tab-content active">
   <p class="subtitle">Selecione os serviços, marque as peças e informe o preço de cada peça para este orçamento.</p>
 
   <div class="card">
@@ -82,6 +85,9 @@ button { border:0; border-radius:8px; padding:11px 16px; cursor:pointer; font-we
     <p id="copyStatus" class="small"></p>
   </div>
 
+  </section>
+
+  <section id="cadastro" class="tab-content">
   <div class="card">
     <h2>Cadastro de serviços e peças</h2>
     <p class="small">Esses cadastros ficam salvos neste navegador. Para levar para outro computador, use os botões de exportar/importar configuração.</p>
@@ -108,6 +114,7 @@ button { border:0; border-radius:8px; padding:11px 16px; cursor:pointer; font-we
   </div>
 </div>
 
+  </section>
 <script>
 const DEFAULT_SERVICES = [
   ["Revisão", 92.00],
@@ -143,6 +150,8 @@ function money(v) {
 function esc(s) {
   return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
+function showTab(tabId, button) { document.querySelectorAll(".tab-content").forEach(el=>el.classList.remove("active")); document.querySelectorAll(".tab-button").forEach(el=>el.classList.remove("active")); document.getElementById(tabId).classList.add("active"); button.classList.add("active"); }
+
 function loadConfig() {
   try {
     const x = JSON.parse(localStorage.getItem(KEY));
