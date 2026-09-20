@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerador de Orçamentos</title>
+<style>
+:root { --border:#d9dee5; --bg:#f5f7fa; --text:#20252b; --muted:#66707a; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:Arial,Helvetica,sans-serif; color:var(--text); background:var(--bg); }
+.container { max-width:1100px; margin:30px auto; padding:0 18px 40px; }
+h1 { margin:0 0 6px; } h2 { margin:0 0 14px; font-size:20px; }
+.subtitle { color:var(--muted); margin:0 0 24px; }
+.card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:18px; box-shadow:0 2px 8px rgba(0,0,0,.04); }
+.grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+label { display:block; font-weight:600; margin-bottom:6px; }
+input, button, textarea { font:inherit; }
+input[type=text], input[type=number], textarea { width:100%; border:1px solid #cbd2d9; border-radius:7px; padding:10px; }
+textarea { min-height:230px; resize:vertical; font-family:Consolas,monospace; line-height:1.45; }
+.table { width:100%; border-collapse:collapse; }
+.table th,.table td { padding:9px 8px; border-bottom:1px solid #e8ebef; text-align:left; vertical-align:middle; }
+.table th { font-size:13px; color:var(--muted); }
+.price { text-align:right !important; white-space:nowrap; }
+.check { width:20px; height:20px; }
+.actions { display:flex; gap:10px; flex-wrap:wrap; }
+button { border:0; border-radius:8px; padding:11px 16px; cursor:pointer; font-weight:700; }
+.primary { background:#1f2937; color:white; }
+.secondary { background:#e8edf2; color:#20252b; }
+.danger { background:#fee2e2; color:#991b1b; }
+.total-row { font-weight:700; font-size:17px; }
+.small { font-size:13px; color:var(--muted); }
+.admin-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.admin-list { display:flex; flex-direction:column; gap:8px; }
+.admin-item { display:grid; grid-template-columns:1fr 110px 38px; gap:8px; align-items:center; }
+.admin-item input { padding:8px; }
+.output { white-space:pre-wrap; background:#f8fafc; }
+@media(max-width:750px) {
+  .grid,.admin-grid { grid-template-columns:1fr; }
+  .admin-item { grid-template-columns:1fr 100px 38px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Gerador de Orçamentos</h1>
+  <p class="subtitle">Selecione os serviços, marque as peças e informe o preço de cada peça para este orçamento.</p>
+
+  <div class="card">
+    <h2>Dados do veículo</h2>
+    <div class="grid">
+      <div><label for="placa">Placa</label><input id="placa" type="text" placeholder="Ex.: RHX8B92" autocomplete="off"></div>
+      <div><label for="km">KM atual</label><input id="km" type="number" placeholder="Ex.: 59708" min="0"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Serviços</h2>
+    <table class="table">
+      <thead><tr><th></th><th>Serviço</th><th class="price">Preço</th></tr></thead>
+      <tbody id="services"></tbody>
+      <tfoot><tr class="total-row"><td></td><td>Serviços</td><td id="serviceTotal" class="price">R$ 0,00</td></tr></tfoot>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Peças</h2>
+    <p class="small">O preço abaixo é preenchido por orçamento. Você pode selecionar peças e alterar seus valores livremente.</p>
+    <table class="table">
+      <thead><tr><th></th><th>Peça</th><th class="price">Preço neste orçamento</th></tr></thead>
+      <tbody id="parts"></tbody>
+      <tfoot><tr class="total-row"><td></td><td>Peças</td><td id="partTotal" class="price">R$ 0,00</td></tr></tfoot>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Resultado</h2>
+    <textarea id="output" class="output" readonly></textarea>
+    <div class="actions" style="margin-top:12px">
+      <button class="primary" onclick="copyOutput()">Copiar relatório</button>
+      <button class="secondary" onclick="resetBudget()">Limpar orçamento</button>
+    </div>
+    <p id="copyStatus" class="small"></p>
+  </div>
+
+  <div class="card">
+    <h2>Cadastro de serviços e peças</h2>
+    <p class="small">Esses cadastros ficam salvos neste navegador. Para levar para outro computador, use os botões de exportar/importar configuração.</p>
+    <div class="admin-grid">
+      <div>
+        <h3>Serviços (preço fixo)</h3>
+        <div id="adminServices" class="admin-list"></div>
+        <button class="secondary" onclick="addService()" style="margin-top:10px">+ Adicionar serviço</button>
+      </div>
+      <div>
+        <h3>Peças</h3>
+        <div id="adminParts" class="admin-list"></div>
+        <button class="secondary" onclick="addPart()" style="margin-top:10px">+ Adicionar peça</button>
+      </div>
+    </div>
+    <div class="actions" style="margin-top:18px">
+      <button class="secondary" onclick="exportConfig()">Exportar configuração</button>
+      <label class="secondary" style="display:inline-flex;align-items:center;cursor:pointer">
+        Importar configuração
+        <input id="importFile" type="file" accept=".json" style="display:none" onchange="importConfig(event)">
+      </label>
+      <button class="danger" onclick="restoreDefaults()">Restaurar cadastro original</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DEFAULT_SERVICES = [
+  ["Revisão", 92.00],
+  ["Alinhamento/Balanceamento", 80.00],
+  ["Alinhamento/Balanceamento", 130.00],
+  ["Substituição filtro de polen", 56.90],
+  ["Substituição elemento filtrante", 56.90],
+  ["Substituição palheta", 40.00],
+  ["Substituição bateria", 50.00],
+  ["Substituição pastilha", 156.00],
+  ["Substituição disco", 156.00],
+  ["Substituição fluido de freio", 110.00],
+  ["Substituição aditivo", 110.00],
+  ["Substituição lâmpada", 40.00],
+  ["Substituição cilindro do atuador", 313.00],
+  ["Substituição kit embreagem", 1160.00],
+  ["Substituição defletor", 175.00]
+];
+
+const DEFAULT_PARTS = [
+  "Anel bujão","Elemento filtrante","Filtro de Polen","Fluido de Freio","Filtro Oleo",
+  "Oleo Motor"
+];
+
+const KEY = "gerador_orcamentos_config_v1";
+
+let config = loadConfig();
+let budgetPartPrices = {};
+
+function money(v) {
+  return new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(Number(v)||0);
+}
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function loadConfig() {
+  try {
+    const x = JSON.parse(localStorage.getItem(KEY));
+    if (x && Array.isArray(x.services) && Array.isArray(x.parts)) return x;
+  } catch(e) {}
+  return {services:DEFAULT_SERVICES.map(x=>({name:x[0],price:x[1]})), parts:DEFAULT_PARTS.slice()};
+}
+function saveConfig() {
+  localStorage.setItem(KEY, JSON.stringify(config));
+}
+function render() {
+  const st = document.getElementById("services");
+  st.innerHTML = config.services.map((s,i)=>`
+    <tr><td><input class="check service-check" type="checkbox" data-i="${i}" onchange="calculate()"></td>
+    <td>${esc(s.name)}</td><td class="price">${money(s.price)}</td></tr>`).join("");
+
+  const pt = document.getElementById("parts");
+  pt.innerHTML = config.parts.map((p,i)=>`
+    <tr><td><input class="check part-check" type="checkbox" data-i="${i}" onchange="calculate()"></td>
+    <td>${esc(p)}</td>
+    <td class="price"><input class="part-price" data-i="${i}" type="number" step="0.01" min="0" placeholder="0,00" oninput="calculate()" style="max-width:150px;text-align:right"></td></tr>`).join("");
+
+  renderAdmin();
+  calculate();
+}
+function calculate() {
+  let serviceTotal=0, partTotal=0;
+  document.querySelectorAll(".service-check:checked").forEach(el => serviceTotal += Number(config.services[el.dataset.i].price)||0);
+  document.querySelectorAll(".part-check:checked").forEach(el => {
+    const inp = document.querySelector(`.part-price[data-i="${el.dataset.i}"]`);
+    partTotal += Number(inp?.value)||0;
+  });
+  document.getElementById("serviceTotal").textContent=money(serviceTotal);
+  document.getElementById("partTotal").textContent=money(partTotal);
+  const placa=document.getElementById("placa").value.trim().toUpperCase();
+  const km=document.getElementById("km").value.trim();
+
+  let lines=[];
+  lines.push("VICENTE MACHADO");
+  if (placa) lines.push("Placa: "+placa);
+  else lines.push("Placa:");
+  if (km) lines.push("KM: "+km);
+  else lines.push("KM:");
+  lines.push("");
+
+  document.querySelectorAll(".service-check:checked").forEach(el=>{
+    const s=config.services[el.dataset.i];
+    lines.push(`${s.name}: ${money(s.price)}`);
+  });
+  lines.push(`Serviços: ${money(serviceTotal)}`);
+  lines.push("");
+
+  document.querySelectorAll(".part-check:checked").forEach(el=>{
+    const i=Number(el.dataset.i), p=config.parts[i];
+    const inp=document.querySelector(`.part-price[data-i="${i}"]`);
+    lines.push(`${p}: ${money(Number(inp?.value)||0)}`);
+  });
+  lines.push(`Peças: ${money(partTotal)}`);
+  lines.push("");
+  lines.push(`TOTAL: ${money(serviceTotal+partTotal)}`);
+  document.getElementById("output").value=lines.join("\n");
+}
+function renderAdmin() {
+  document.getElementById("adminServices").innerHTML=config.services.map((s,i)=>`
+    <div class="admin-item">
+      <input value="${esc(s.name)}" oninput="editService(${i},'name',this.value)">
+      <input type="number" step="0.01" value="${Number(s.price).toFixed(2)}" oninput="editService(${i},'price',this.value)">
+      <button class="danger" onclick="removeService(${i})">×</button>
+    </div>`).join("");
+  document.getElementById("adminParts").innerHTML=config.parts.map((p,i)=>`
+    <div class="admin-item">
+      <input value="${esc(p)}" oninput="editPart(${i},this.value)">
+      <span></span><button class="danger" onclick="removePart(${i})">×</button>
+    </div>`).join("");
+}
+function editService(i,k,v) { config.services[i][k]=k==="price"?(Number(v)||0):v; saveConfig(); render(); }
+function editPart(i,v) { config.parts[i]=v; saveConfig(); render(); }
+function addService() { config.services.push({name:"Novo serviço",price:0}); saveConfig(); render(); }
+function addPart() { config.parts.push("Nova peça"); saveConfig(); render(); }
+function removeService(i) { if(confirm("Remover este serviço do cadastro?")) {config.services.splice(i,1);saveConfig();render();} }
+function removePart(i) { if(confirm("Remover esta peça do cadastro?")) {config.parts.splice(i,1);saveConfig();render();} }
+function resetBudget() {
+  document.getElementById("placa").value="";
+  document.getElementById("km").value="";
+  budgetPartPrices={};
+  render();
+}
+function restoreDefaults() {
+  if(!confirm("Restaurar os serviços e peças originais? As alterações no cadastro serão perdidas.")) return;
+  config={services:DEFAULT_SERVICES.map(x=>({name:x[0],price:x[1]})),parts:DEFAULT_PARTS.slice()};
+  saveConfig(); render();
+}
+function copyOutput() {
+  const text=document.getElementById("output").value;
+  navigator.clipboard.writeText(text).then(()=>{
+    document.getElementById("copyStatus").textContent="Relatório copiado para a área de transferência.";
+    setTimeout(()=>document.getElementById("copyStatus").textContent="",2500);
+  }).catch(()=>{ document.getElementById("output").select(); document.execCommand("copy"); });
+}
+function exportConfig() {
+  const blob=new Blob([JSON.stringify(config,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download="configuracao-orcamentos.json"; a.click();
+  URL.revokeObjectURL(a.href);
+}
+function importConfig(event) {
+  const file=event.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try {
+      const x=JSON.parse(reader.result);
+      if(!Array.isArray(x.services)||!Array.isArray(x.parts)) throw new Error();
+      config=x; saveConfig(); render(); alert("Configuração importada com sucesso.");
+    } catch(e) { alert("Arquivo de configuração inválido."); }
+  };
+  reader.readAsText(file);
+}
+document.getElementById("placa").addEventListener("input",calculate);
+document.getElementById("km").addEventListener("input",calculate);
+render();
+</script>
+</body>
+</html>
