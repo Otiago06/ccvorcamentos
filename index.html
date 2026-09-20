@@ -51,8 +51,8 @@ button { border:0; border-radius:8px; padding:11px 16px; cursor:pointer; font-we
   <div class="card">
     <h2>Dados do veículo</h2>
     <div class="grid">
-      <div><label for="placa">Placa</label><input id="placa" type="text" placeholder="Ex.: ABC1B34" autocomplete="off"></div>
-      <div><label for="km">KM atual</label><input id="km" type="number" placeholder="Ex.: 59708" min="0"></div>
+      <div><label for="placa">Placa</label><input id="placa" type="text" placeholder="Ex.: ABC1B34" autocomplete="off" required></div>
+      <div><label for="km">KM atual</label><input id="km" type="number" placeholder="Ex.: 59708" min="0" required></div>
     </div>
   </div>
 
@@ -90,7 +90,8 @@ button { border:0; border-radius:8px; padding:11px 16px; cursor:pointer; font-we
   <section id="cadastro" class="tab-content">
   <div class="card">
     <h2>Cadastro de serviços e peças</h2>
-    <p class="small">Esses cadastros ficam salvos neste navegador. Para levar para outro computador, use os botões de exportar/importar configuração.</p>
+	<p class="small"><strong>Atenção!!!</strong></p>
+    <p class="small">Aterar esse cadastro, ficará salvo apenas neste navegador. Para levar para outro computador, use os botões de exportar/importar configuração.</p>
     <div class="admin-grid">
       <div>
         <h3>Serviços (preço fixo)</h3>
@@ -111,6 +112,7 @@ button { border:0; border-radius:8px; padding:11px 16px; cursor:pointer; font-we
       </label>
       <button class="danger" onclick="restoreDefaults()">Restaurar cadastro original</button>
     </div>
+	<p class="small">Powered by Tiago Oliveira - Copyright ©2026 - All Rights Reserved</p>
   </div>
 </div>
 
