@@ -3,487 +3,557 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gerador de Orçamentos - v1.0.4 - Powered by Tiago®</title>
+<title>Gerador de Orçamentos - v1.0.5 - Powered by Tiago®</title>
 <style>
-:root { --border:#d9dee5; --bg:#f5f7fa; --text:#20252b; --muted:#66707a; }
-* { box-sizing:border-box; }
-body { margin:0; font-family:Arial,Helvetica,sans-serif; color:var(--text); background:var(--bg); }
-.container { max-width:1100px; margin:30px auto; padding:0 18px 40px; }
-h1 { margin:0 0 6px; } h2 { margin:0 0 14px; font-size:20px; }
-.subtitle { color:var(--muted); margin:0 0 24px; }
-.card { background:#fff; border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:18px; box-shadow:0 2px 8px rgba(0,0,0,.04); }
-.grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
-label { display:block; font-weight:600; margin-bottom:6px; }
-input, button, textarea { font:inherit; }
-input[type=text], input[type=number], textarea { width:100%; border:1px solid #cbd2d9; border-radius:7px; padding:10px; }
-textarea { min-height:230px; resize:vertical; font-family:Consolas,monospace; line-height:1.45; }
-.table { width:100%; border-collapse:collapse; }
-.table th,.table td { padding:9px 8px; border-bottom:1px solid #e8ebef; text-align:left; vertical-align:middle; }
-.table th { font-size:13px; color:var(--muted); }
-.price { text-align:right !important; white-space:nowrap; }
-.check { width:20px; height:20px; }
-.actions { display:flex; gap:10px; flex-wrap:wrap; }
-button { border:0; border-radius:8px; padding:11px 16px; cursor:pointer; font-weight:700; }
-.primary { background:#1f2937; color:white; }
-.secondary { background:#e8edf2; color:#20252b; }
-.danger { background:#fee2e2; color:#991b1b; }
-.total-row { font-weight:700; font-size:17px; }
-.small { font-size:13px; color:var(--muted); }
-.admin-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
-.admin-list { display:flex; flex-direction:column; gap:8px; }
-.admin-item { display:grid; grid-template-columns:1fr 110px 38px; gap:8px; align-items:center; }
-.admin-item input { padding:8px; }
-.output { white-space:pre-wrap; background:#f8fafc; }
-@media(max-width:750px) {
-  .grid,.admin-grid { grid-template-columns:1fr; }
-  .admin-item { grid-template-columns:1fr 100px 38px; }
-}
-.tabs{display:flex;gap:6px;margin-bottom:18px;border-bottom:1px solid #d9dee5}.tab-button{background:#e8edf2;color:#20252b;border:0;border-radius:8px 8px 0 0;padding:12px 20px;cursor:pointer;font-weight:700}.tab-button.active{background:#1f2937;color:#fff}.tab-content{display:none}.tab-content.active{display:block}.file-button{display:inline-flex;align-items:center;cursor:pointer}.file-button input{display:none}</style>
+:root{--border:#d9dee5;--bg:#f5f7fa;--text:#20252b;--muted:#66707a;--primary:#1f2937}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:var(--bg)}
+.container{max-width:1100px;margin:30px auto;padding:0 18px 40px}
+h1{margin:0 0 6px}h2{margin:0 0 14px;font-size:20px}h3{margin-top:0}
+.subtitle{color:var(--muted);margin:0 0 22px}
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:18px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+label{display:block;font-weight:600;margin-bottom:6px}
+input,button,textarea{font:inherit}
+input[type=text],input[type=number],textarea{width:100%;border:1px solid #cbd2d9;border-radius:7px;padding:10px}
+textarea{min-height:220px;resize:vertical;font-family:Consolas,monospace;line-height:1.45}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{padding:10px 8px;border-bottom:1px solid #e8ebef;text-align:left;vertical-align:middle}
+.table th{font-size:13px;color:var(--muted)}
+.price{text-align:right!important;white-space:nowrap}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+button{border:0;border-radius:8px;padding:10px 14px;cursor:pointer;font-weight:700}
+button:disabled{opacity:.45;cursor:not-allowed}
+.primary{background:var(--primary);color:#fff}.secondary{background:#e8edf2;color:#20252b}.danger{background:#fee2e2;color:#991b1b}.tiny{padding:7px 10px;font-size:13px}
+.total-row{font-weight:700;font-size:17px}.small{font-size:13px;color:var(--muted)}
+.tabs{display:flex;gap:6px;margin-bottom:18px;border-bottom:1px solid var(--border)}
+.tab-button{background:#e8edf2;color:var(--text);border-radius:8px 8px 0 0;padding:12px 20px}
+.tab-button.active{background:var(--primary);color:#fff}.tab-content{display:none}.tab-content.active{display:block}
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.admin-list{display:flex;flex-direction:column;gap:8px}
+.admin-item{display:grid;grid-template-columns:1fr 120px 38px;gap:8px;align-items:center}.admin-item input{padding:8px}
+.output{white-space:pre-wrap;background:#f8fafc}.file-button{display:inline-flex;align-items:center;cursor:pointer;margin:0}.file-button input{display:none}
+.empty{padding:18px 8px;color:var(--muted);text-align:center}
+.item-name-input{min-width:120px}.item-price-input{max-width:145px;text-align:right}
+.modal-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;padding:18px;z-index:10}
+.modal-backdrop.open{display:flex}.modal{background:white;border-radius:14px;width:min(650px,100%);max-height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal-head{padding:20px 20px 12px;border-bottom:1px solid var(--border)}.modal-body{padding:14px 20px;overflow:auto}
+.modal-foot{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end}
+.search-input{font-size:16px;margin-top:8px}
+.catalog-row{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #edf0f3}
+.catalog-row:last-child{border-bottom:0}.catalog-name{font-weight:600;overflow-wrap:anywhere}.catalog-meta{color:var(--muted);font-size:13px;margin-top:4px}
+@media(max-width:750px){.grid,.admin-grid{grid-template-columns:1fr}.admin-item{grid-template-columns:1fr 95px 38px}.table th,.table td{padding:8px 5px}.tabs .tab-button{flex:1;padding:11px 8px}.modal{max-height:90vh}.mobile-stack{display:flex;flex-direction:column;align-items:flex-start;gap:5px}}
+</style>
 </head>
 <body>
 <div class="container">
   <h1>Gerador de Orçamentos</h1>
-  <p class="subtitle">Crie o orçamento e copie o relatório pronto para enviar.</p>
-  <div class="tabs"><button class="tab-button active" onclick="showTab('orcamento', this)">Novo orçamento</button><button class="tab-button" onclick="showTab('cadastro', this)">Cadastro</button></div>
+  <p class="subtitle">Adicione somente os serviços e as peças utilizados neste orçamento.</p>
+  <div class="tabs">
+    <button class="tab-button active" onclick="showTab('orcamento',this)">Novo orçamento</button>
+    <button class="tab-button" onclick="showTab('cadastro',this)">Cadastro</button>
+  </div>
+
   <section id="orcamento" class="tab-content active">
-  <p class="subtitle">Selecione os serviços, marque as peças e informe o preço de cada peça para este orçamento.</p>
-
-  <div class="card">
-    <h2>Dados do veículo</h2>
-    <div class="grid">
-      <div><label for="placa">Placa</label><input id="placa" type="text" placeholder="Ex.: ABC1B34" autocomplete="off" required></div>
-      <div><label for="km">KM atual</label><input id="km" type="number" placeholder="Ex.: 59708" min="0" required></div>
+    <div class="card">
+      <h2>Dados do veículo</h2>
+      <div class="grid">
+        <div><label for="placa">Placa</label><input id="placa" type="text" placeholder="Ex.: RHX8B92" autocomplete="off"></div>
+        <div><label for="km">KM atual</label><input id="km" type="number" placeholder="Ex.: 59708" min="0"></div>
+      </div>
     </div>
-  </div>
 
-  <div class="card">
-    <h2>Serviços</h2>
-    <table class="table">
-      <thead><tr><th></th><th>Serviço</th><th class="price">Preço</th></tr></thead>
-      <tbody id="services"></tbody>
-      <tfoot><tr class="total-row"><td></td><td>Serviços</td><td id="serviceTotal" class="price">R$ 0,00</td></tr></tfoot>
-    </table>
-  </div>
-
-  <div class="card">
-    <h2>Peças</h2>
-    <p class="small">O preço abaixo é preenchido por orçamento. Você pode selecionar peças e alterar seus valores livremente.</p>
-    <table class="table">
-      <thead><tr><th></th><th>Peça</th><th class="price">Preço neste orçamento</th></tr></thead>
-      <tbody id="parts"></tbody>
-      <tfoot><tr class="total-row"><td></td><td>Peças</td><td id="partTotal" class="price">R$ 0,00</td></tr></tfoot>
-    </table>
-  </div>
-
-  <div class="card">
-    <h2>Resultado</h2>
-    <textarea id="output" class="output" readonly></textarea>
-    <div class="actions" style="margin-top:12px">
-      <button class="primary" onclick="copyOutput()">Copiar relatório</button>
-      <button class="secondary" onclick="resetBudget()">Limpar orçamento</button>
+    <div class="card">
+      <div class="actions" style="justify-content:space-between;align-items:center;margin-bottom:10px">
+        <h2 style="margin:0">Serviços deste orçamento</h2>
+        <button class="primary" onclick="openPicker('service')">+ Adicionar serviço</button>
+      </div>
+      <table class="table">
+        <thead><tr><th>Serviço</th><th class="price">Preço</th><th>Ações</th></tr></thead>
+        <tbody id="selectedServices"></tbody>
+        <tfoot><tr class="total-row"><td>Serviços</td><td id="serviceTotal" class="price">R$ 0,00</td><td></td></tr></tfoot>
+      </table>
     </div>
-    <p id="copyStatus" class="small"></p>
-  </div>
 
+    <div class="card">
+      <div class="actions" style="justify-content:space-between;align-items:center;margin-bottom:10px">
+        <h2 style="margin:0">Peças deste orçamento</h2>
+        <button class="primary" onclick="openPicker('part')">+ Adicionar peça</button>
+      </div>
+      <p class="small">O preço das peças é informado para cada orçamento. Você pode editar o nome ou o valor de qualquer item incluído.</p>
+      <table class="table">
+        <thead><tr><th>Peça</th><th class="price">Preço</th><th>Ações</th></tr></thead>
+        <tbody id="selectedParts"></tbody>
+        <tfoot><tr class="total-row"><td>Peças</td><td id="partTotal" class="price">R$ 0,00</td><td></td></tr></tfoot>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Resultado</h2>
+      <textarea id="output" class="output" readonly></textarea>
+      <div class="actions" style="margin-top:12px">
+        <button class="primary" onclick="copyOutput()">Copiar relatório</button>
+        <button class="secondary" onclick="resetBudget()">Novo orçamento / Limpar</button>
+      </div>
+      <p id="copyStatus" class="small"></p>
+    </div>
   </section>
 
   <section id="cadastro" class="tab-content">
-  <div class="card">
-    <h2>Cadastro de serviços e peças</h2>
-	<p class="small"><strong>Atenção!!!</strong></p>
-    <p class="small">Aterar esse cadastro, ficará salvo apenas neste navegador. Para levar para outro computador, use os botões de exportar/importar configuração.</p>
-    <div class="admin-grid">
-      <div>
-        <h3>Serviços (preço fixo)</h3>
-        <div id="adminServices" class="admin-list"></div>
-        <button class="secondary" onclick="addService()" style="margin-top:10px">+ Adicionar serviço</button>
+    <div class="card">
+      <h2>Cadastro de serviços e peças</h2>
+      <p class="small">Edite aqui o catálogo completo. As alterações são salvas automaticamente neste navegador. Os itens deste orçamento são uma lista separada do cadastro.</p>
+      <div class="admin-grid">
+        <div>
+          <h3>Serviços — preço fixo</h3>
+          <div id="adminServices" class="admin-list"></div>
+          <button class="secondary" onclick="addService()" style="margin-top:10px">+ Adicionar serviço ao cadastro</button>
+        </div>
+        <div>
+          <h3>Peças — preço por orçamento</h3>
+          <div id="adminParts" class="admin-list"></div>
+          <button class="secondary" onclick="addPart()" style="margin-top:10px">+ Adicionar peça ao cadastro</button>
+        </div>
       </div>
-      <div>
-        <h3>Peças</h3>
-        <div id="adminParts" class="admin-list"></div>
-        <button class="secondary" onclick="addPart()" style="margin-top:10px">+ Adicionar peça</button>
+      <div class="actions" style="margin-top:22px">
+        <button class="secondary" onclick="exportConfig()">Exportar configuração</button>
+        <label class="secondary file-button">Importar configuração<input id="importFile" type="file" accept=".json" onchange="importConfig(event)"></label>
+        <button class="danger" onclick="restoreDefaults()">Restaurar cadastro original</button>
       </div>
     </div>
-    <div class="actions" style="margin-top:18px">
-      <button class="secondary" onclick="exportConfig()">Exportar configuração</button>
-      <label class="secondary" style="display:inline-flex;align-items:center;cursor:pointer">
-        Importar configuração
-        <input id="importFile" type="file" accept=".json" style="display:none" onchange="importConfig(event)">
-      </label>
-      <button class="danger" onclick="restoreDefaults()">Restaurar cadastro original</button>
+  </section>
+</div>
+
+<div id="pickerBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="pickerTitle" onclick="backdropClose(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="actions" style="align-items:center;justify-content:space-between">
+        <h2 id="pickerTitle" style="margin:0">Adicionar item</h2>
+        <button class="secondary tiny" onclick="closePicker()">Fechar</button>
+      </div>
+      <input id="catalogSearch" class="search-input" type="text" placeholder="Pesquisar pelo nome..." oninput="renderPicker()" autocomplete="off">
+      <p id="pickerHint" class="small">Pesquise por qualquer parte do nome e adicione o item desejado.</p>
     </div>
-	<p class="small">Powered by Tiago Oliveira - Copyright ©2026 - All Rights Reserved</p>
+    <div id="pickerList" class="modal-body"></div>
+    <div class="modal-foot"><button class="secondary" onclick="closePicker()">Concluir</button></div>
   </div>
 </div>
 
-  </section>
 <script>
 const DEFAULT_SERVICES = [
-	["Alinhamento/Balanceamento", 130.00],
-	["Alinhamento/Balanceamento", 80.00],
-	["Cabeçote e Motor", 6500.00],
-	["Carga de Gas", 120.00],
-	["Desmontagem e Montagem de Cabeçote", 3000.00],
-	["Diagnostico", 313.00],
-	["Instalação do Protetor de Carter", 110.00],
-	["Limpeza da Caixa Evaporadora", 80.40],
-	["Limpeza de Freios", 110.00],
-	["Limpeza de Lonas", 110.00],
-	["Limpeza do Corpo Aceleração", 120.00],
-	["Limpeza do Teto", 120.00],
-	["Montagem de Motor e Retifica", 6500.00],
-	["Revisão", 92.00],
-	["Substituição do Batente Superior", 420.00],
-	["Substituiçao do Recipiente", 313.00],
-	["Substituição da Bateria", 50.00],
-	["Substituição da Palheta", 40.00],
-	["Substituição da Pastilha", 156.00],
-	["Substituição de Bieletas", 250.00],
-	["Substituição de Disco", 156.00],
-	["Substituição de Filtro de Polen", 56.90],
-	["Substituição de Valvula", 313.00],
-	["Substituição de Velas", 250.00],
-	["Substituição do Aditivo", 110.00],
-	["Substituição do Batente Superior", 420.00],
-	["Substituição do Batente", 420.00],
-	["Substituição do Cabeçote", 6500.00],
-	["Substituição do Semi-Eixo", 500.00],
-	["Troca da Articulação da Barra", 125.00],
-	["Troca da Bomba", 350.00],
-	["Troca da Caixa", 400.00],
-	["Troca da Coluna de Direção", 400.00],
-	["Troca da Correia de Acessorios", 156.00],
-	["Troca da Correia", 156.00],
-	["Troca da Embreagem", 939.00],
-	["Troca da Lampada", 40.00],
-	["Troca da Lanterna", 313.00],
-	["Troca da Mangueira", 313.00],
-	["Troca da Maçaneta", 156.00],
-	["Troca da Mola", 156.00],
-	["Troca da Sapata de Freio", 375.00],
-	["Troca de Molas", 850.00],
-	["Troca de Palhetas", 40.00],
-	["Troca de Pastilha e Disco", 200.00],
-	["Troca de Pastilhas de Freio", 156.00],
-	["Troca de Pastilhas", 110.00],
-	["Troca de Sensor", 156.00],
-	["Troca do Amortecedor", 350.00],
-	["Troca do Carter", 156.00],
-	["Troca do Catalizador", 406.00],
-	["Troca do Cilindro de Freio", 375.00],
-	["Troca do Cilindro do Atuador", 970.00],
-	["Troca do Condensador", 782.00],
-	["Troca do Defletor", 500.00],
-	["Troca do Elemento Filtrante", 62.00],
-	["Troca do Elemento", 62.00],
-	["Troca do Farol", 350.00],
-	["Troca do Filtro de Combustivel", 62.00],
-	["Troca do Fluido", 110.00],
-	["Troca do Fluído de Freio", 110.00],
-	["Troca do Forro", 125.46],
-	["Troca do Kit de Embreagem:", 1158.10],
-	["Troca do Modulo", 350.00],
-	["Troca do Motor de Arranque", 532.10],
-	["Troca do Protetor de Calor", 313.00],
-	["Troca do Protetor de Carter", 110.00],
-	["Troca do Reservatorio", 281.00],
-	["Troca do Sensor de Pneu", 125.00],
-	["Troca do Tambor", 250.00],
-	["Troca do Tensor", 500.00],
-	["Troca do Turbo Compressor", 688.60],
-	["Troca do Volante", 939.00]
+  ["Alinhamento/Balanceamento", 80.00],
+  ["Alinhamento/Balanceamento", 130.00],
+  ["Cabeçote e Motor", 6500.00],
+  ["Carga de Gas", 120.00],
+  ["Desmontagem e Montagem de Cabeçote", 3000.00],
+  ["Diagnostico", 313.00],
+  ["Instalação de carter", 110.00],
+  ["Instalação de protetor de carter", 110.00],
+  ["Instalação do Protetor de Carter", 110.00],
+  ["Limpeza da Caixa Evaporadora", 80.40],
+  ["Limpeza de Freios", 110.00],
+  ["Limpeza de Lonas", 110.00],
+  ["Limpeza do Corpo Aceleração", 120.00],
+  ["Limpeza do Teto", 120.00],
+  ["Montagem de Motor e Retifica", 6500.00],
+  ["Revisão", 92.00],
+  ["Substituiçao do Recipiente", 313.00],
+  ["Substituição da Bateria", 50.00],
+  ["Substituição da Palheta", 40.00],
+  ["Substituição da Pastilha", 156.00],
+  ["Substituição de Bieletas", 250.00],
+  ["Substituição de Disco", 156.00],
+  ["Substituição de Filtro de Polen", 56.90],
+  ["Substituição de Valvula", 313.00],
+  ["Substituição de Velas", 250.00],
+  ["Substituição do Aditivo", 110.00],
+  ["Substituição do Batente Superior", 420.00],
+  ["Substituição do Batente Superior", 420.00],
+  ["Substituição do Batente", 420.00],
+  ["Substituição do Cabeçote", 6500.00],
+  ["Substituição do Semi-Eixo", 500.00],
+  ["Troca da Articulação da Barra", 125.00],
+  ["Troca da Bomba", 350.00],
+  ["Troca da Caixa", 400.00],
+  ["Troca da Coluna de Direção", 400.00],
+  ["Troca da Correia de Acessorios", 156.00],
+  ["Troca da Correia", 156.00],
+  ["Troca da Embreagem", 939.00],
+  ["Troca da Lampada", 40.00],
+  ["Troca da Lanterna", 313.00],
+  ["Troca da Maçaneta", 156.00],
+  ["Troca da Mangueira", 313.00],
+  ["Troca da Mola", 156.00],
+  ["Troca da Sapata de Freio", 375.00],
+  ["Troca de Molas", 850.00],
+  ["Troca de Palhetas", 40.00],
+  ["Troca de Pastilha e Disco", 200.00],
+  ["Troca de Pastilhas de Freio", 156.00],
+  ["Troca de Pastilhas", 110.00],
+  ["Troca de Sensor", 156.00],
+  ["Troca do Amortecedor", 350.00],
+  ["Troca do Carter", 156.00],
+  ["Troca do Catalizador", 406.00],
+  ["Troca do Cilindro de Freio", 375.00],
+  ["Troca do Cilindro do Atuador", 970.00],
+  ["Troca do Condensador", 782.00],
+  ["Troca do Defletor", 500.00],
+  ["Troca do Elemento Filtrante", 62.00],
+  ["Troca do Elemento", 62.00],
+  ["Troca do Farol", 350.00],
+  ["Troca do Filtro de Combustivel", 62.00],
+  ["Troca do Fluido", 110.00],
+  ["Troca do Fluído de Freio", 110.00],
+  ["Troca do Forro", 125.46],
+  ["Troca do Kit de Embreagem:", 1158.10],
+  ["Troca do Modulo", 350.00],
+  ["Troca do Motor de Arranque", 532.10],
+  ["Troca do Protetor de Calor", 313.00],
+  ["Troca do Protetor de Carter", 110.00],
+  ["Troca do Reservatorio", 281.00],
+  ["Troca do Sensor de Pneu", 125.00],
+  ["Troca do Tambor", 250.00],
+  ["Troca do Tensor", 500.00],
+  ["Troca do Turbo Compressor", 688.60],
+  ["Troca do Volante", 939.00]
 ];
-
 const DEFAULT_PARTS = [
-	"ADS60DD",
-	"Absorber",
-	"Aditivo do Radiador",
-	"Aditivo",
-	"Agua Desmineralizada",
-	"Amortecedor Dianteiro",
-	"Amortecedor Traseiro",
-	"Anel do Bujão",
-	"Anel do Vedador da Polia",
-	"Articulação da Barra",
-	"Balancim",
-	"Bateria 72AH",
-	"Bateria",
-	"Bieleta LD",
-	"Bieleta LE",
-	"Bomba D'Agua",
-	"Bomba de Combustivel",
-	"Bomba de Vacuo",
-	"Braço da Suspensão",
-	"Bucha",
-	"Buzina Eletrica",
-	"Cabeçote com Valvula",
-	"Cabeçote e Motor",
-	"Caixa de direção",
-	"Carpete Acabamento",
-	"Carter de Oleo",
-	"Cilindro Mestre",
-	"Cilindro de Freio",
-	"Cilindro do Atuador",
-	"Cilindro do Pedal",
-	"Coifa Kit Junta",
-	"Cola Seladora",
-	"Coluna de Direção",
-	"Comando de Válvula Admissão",
-	"Comando de Válvula Exaustão",
-	"Condensador",
-	"Conversor Catalitico",
-	"Correia Dentada",
-	"Correia Multi-V",
-	"Correia da Bomba de Oleo",
-	"Correia",
-	"Coxim Amortecedor Dianteiro",
-	"Coxim Amortecedor Traseiro",
-	"Coxim Amortecedor",
-	"Coxim da Caixa de Transmissão",
-	"Coxim de Borracha",
-	"Coxim",
-	"Defletor",
-	"Descarbonizante",
-	"Disco de Embreagem",
-	"Disco de Freio Dianteiro",
-	"Disco de Freio Traseiro",
-	"Disco",
-	"Elemento Filtrante",
-	"Engrenagem do Comando de Válvula",
-	"Escora da Valvula",
-	"Farol Direito",
-	"Farol Esquerdo",
-	"Farol",
-	"Filtro AC",
-	"Filtro Lubrificante",
-	"Filtro de Ar do Motor",
-	"Filtro de Cabine",
-	"Filtro de Combustivel",
-	"Filtro de Oleo",
-	"Filtro de Polen",
-	"Filtro do Ar Condicionado",
-	"Fluido de Freio DOT3",
-	"Fluido de Freio",
-	"Fluido",
-	"Fluído de Freio DOT4",
-	"Forro da Caixa",
-	"Graxa",
-	"Interruptor do Vidro Porta",
-	"Interruptor do Vidro",
-	"Jogo de Cabos de Velas",
-	"Jogo de Sapata de Freio",
-	"Jogo de Fios",
-	"Junta Metaloplastica",
-	"Junta do Cabeçote",
-	"Junta de Aço Estampado",
-	"Junta do Turbo Compressor",
-	"Kit Barra de Articulação",
-	"Kit de Embreagem",
-	"Lampada Farol",
-	"Lampada H11",
-	"Lampada H16",
-	"Lampada H1",
-	"Lampada H3",
-	"Lampada H4",
-	"Lampada H7",
-	"Lampada H8",
-	"Lampada H9",
-	"Lampada Pinguinho",
-	"Lampada",
-	"Lanterna Frontal Direita",
-	"Lanterna Frontal Esquerda",
-	"Lanterna Traseira Direita",
-	"Lanterna Traseira Esquerda",
-	"Lanterna Traseira",
-	"Lanterna",
-	"Limpa Freios",
-	"Limpador de Bico",
-	"Lubrificante",
-	"Magueira",
-	"Mangueira da Valvula de Purga",
-	"Mangueira de Alimentação",
-	"Mangueira",
-	"Maçaneta Externa Direita",
-	"Maçaneta Externa Esquerda",
-	"Maçaneta",
-	"Modulo de Aquecimento",
-	"Mola de Suspensão",
-	"Mola de Suspensão Dianteira",
-	"Mola de Suspensão Traseira",
-	"Mola de Suspensão",
-	"Motor de Arranque",
-	"Oleo de Motor",
-	"Palheta do Limpador Traseiro",
-	"Palheta do Limpador",
-	"Palheta",
-	"Parafuso do Cabeçote",
-	"Parafuso M10X1.5X94",
-	"Parafuso da Polia",
-	"Parafuso de Roda",
-	"Pastilha de Freio",
-	"Pastilha",
-	"Pilha CR2032",
-	"Pilha da Chave",
-	"Plato de Embreagem",
-	"Pneu(s)",
-	"Porca Roscada",
-	"Porca da Roda",
-	"Prisioneiro da Roda",
-	"Programação",
-	"Protetor de Calor",
-	"Recipiente para Filtro",
-	"Reservatório de Agua",
-	"Sensor de Oxigenio",
-	"Sensor de Temperatura",
-	"Sensor de Pressão do Pneu",
-	"Tambor de Freio",
-	"Tampa Frontal",
-	"Tensionador de Correia",
-	"Tuchos Escora de Valvula",
-	"Valvula de Admissao",
-	"Valvula de Exaustão",
-	"Valvula Atuadora",
-	"Valvula de Purga",
-	"Vedador",
-	"Vedador de Valvula",
-	"Velas de Ignição",
-	"Velas",
-	"Volante"
-];
-
+    "ADS60DD",
+    "Absorber",
+    "Aditivo do Radiador",
+    "Aditivo",
+    "Agua Desmineralizada",
+    "Amortecedor Dianteiro",
+    "Amortecedor Traseiro",
+    "Anel do Bujão",
+    "Anel do Vedador da Polia",
+    "Articulação da Barra",
+    "Balancim",
+    "Bateria 72AH",
+    "Bateria",
+    "Bieleta LD",
+    "Bieleta LE",
+    "Bomba D'Agua",
+    "Bomba de Combustivel",
+    "Bomba de Vacuo",
+    "Braço da Suspensão",
+    "Bucha",
+    "Buzina Eletrica",
+    "Cabeçote com Valvula",
+    "Cabeçote e Motor",
+    "Caixa de direção",
+    "Carpete Acabamento",
+    "Carter de Oleo",
+    "Cilindro Mestre",
+    "Cilindro de Freio",
+    "Cilindro do Atuador",
+    "Cilindro do Pedal",
+    "Coifa Kit Junta",
+    "Cola Seladora",
+    "Coluna de Direção",
+    "Comando de Válvula Admissão",
+    "Comando de Válvula Exaustão",
+    "Condensador",
+    "Conversor Catalitico",
+    "Correia Dentada",
+    "Correia Multi-V",
+    "Correia da Bomba de Oleo",
+    "Correia",
+    "Coxim Amortecedor Dianteiro",
+    "Coxim Amortecedor Traseiro",
+    "Coxim Amortecedor",
+    "Coxim da Caixa de Transmissão",
+    "Coxim de Borracha",
+    "Coxim",
+    "Defletor",
+    "Descarbonizante",
+    "Disco de Embreagem",
+    "Disco de Freio Dianteiro",
+    "Disco de Freio Traseiro",
+    "Disco",
+    "Elemento Filtrante",
+    "Engrenagem do Comando de Válvula",
+    "Escora da Valvula",
+    "Farol Direito",
+    "Farol Esquerdo",
+    "Farol",
+    "Filtro AC",
+    "Filtro Lubrificante",
+    "Filtro de Ar do Motor",
+    "Filtro de Cabine",
+    "Filtro de Combustivel",
+    "Filtro de Oleo",
+    "Filtro de Polen",
+    "Filtro do Ar Condicionado",
+    "Fluido de Freio DOT3",
+    "Fluido de Freio",
+    "Fluido",
+    "Fluído de Freio DOT4",
+    "Forro da Caixa",
+    "Graxa",
+    "Interruptor do Vidro Porta",
+    "Interruptor do Vidro",
+    "Jogo de Cabos de Velas",
+    "Jogo de Sapata de Freio",
+    "Jogo de Fios",
+    "Junta Metaloplastica",
+    "Junta do Cabeçote",
+    "Junta de Aço Estampado",
+    "Junta do Turbo Compressor",
+    "Kit Barra de Articulação",
+    "Kit de Embreagem",
+    "Lampada Farol",
+    "Lampada H11",
+    "Lampada H16",
+    "Lampada H1",
+    "Lampada H3",
+    "Lampada H4",
+    "Lampada H7",
+    "Lampada H8",
+    "Lampada H9",
+    "Lampada Pinguinho",
+    "Lampada",
+    "Lanterna Frontal Direita",
+    "Lanterna Frontal Esquerda",
+    "Lanterna Traseira Direita",
+    "Lanterna Traseira Esquerda",
+    "Lanterna Traseira",
+    "Lanterna",
+    "Limpa Freios",
+    "Limpador de Bico",
+    "Lubrificante",
+    "Magueira",
+    "Mangueira da Valvula de Purga",
+    "Mangueira de Alimentação",
+    "Mangueira",
+    "Maçaneta Externa Direita",
+    "Maçaneta Externa Esquerda",
+    "Maçaneta",
+    "Modulo de Aquecimento",
+    "Mola de Suspensão",
+    "Mola de Suspensão Dianteira",
+    "Mola de Suspensão Traseira",
+    "Mola de Suspensão",
+    "Motor de Arranque",
+    "Item Não Listado",
+    "Outro Item",
+    "Oleo de Motor",
+    "Palheta do Limpador Traseiro",
+    "Palheta do Limpador",
+    "Palheta",
+    "Parafuso do Cabeçote",
+    "Parafuso M10X1.5X94",
+    "Parafuso da Polia",
+    "Parafuso de Roda",
+    "Pastilha de Freio",
+    "Pastilha",
+    "Pilha CR2032",
+    "Pilha da Chave",
+    "Plato de Embreagem",
+    "Pneu(s)",
+    "Porca Roscada",
+    "Porca da Roda",
+    "Prisioneiro da Roda",
+    "Programação",
+    "Protetor de Calor",
+    "Recipiente para Filtro",
+    "Reservatório de Agua",
+    "Sensor de Oxigenio",
+    "Sensor de Temperatura",
+    "Sensor de Pressão do Pneu",
+    "Tambor de Freio",
+    "Tampa Frontal",
+    "Tensionador de Correia",
+    "Tuchos Escora de Valvula",
+    "Valvula de Admissao",
+    "Valvula de Exaustão",
+    "Valvula Atuadora",
+    "Valvula de Purga",
+    "Vedador",
+    "Vedador de Valvula",
+    "Velas de Ignição",
+    "Velas",
+    "Volante",
+    "Carter do Motor",
+    "Protetor de Carter"
+  ];
 const KEY = "gerador_orcamentos_config_v1";
-
 let config = loadConfig();
-let budgetPartPrices = {};
+let selectedServices = [];
+let selectedParts = [];
+let pickerType = "service";
 
-function money(v) {
-  return new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(Number(v)||0);
+function money(v){return new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(Number(v)||0)}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function makeId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,8)}
+function showTab(id,button){
+  document.querySelectorAll(".tab-content").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".tab-button").forEach(x=>x.classList.remove("active"));
+  document.getElementById(id).classList.add("active");button.classList.add("active");
 }
-function esc(s) {
-  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+function loadConfig(){
+  try{const x=JSON.parse(localStorage.getItem(KEY));if(x&&Array.isArray(x.services)&&Array.isArray(x.parts))return x}catch(e){}
+  return {services:DEFAULT_SERVICES.map(x=>({name:x[0],price:x[1]})),parts:DEFAULT_PARTS.slice()};
 }
-function showTab(tabId, button) { document.querySelectorAll(".tab-content").forEach(el=>el.classList.remove("active")); document.querySelectorAll(".tab-button").forEach(el=>el.classList.remove("active")); document.getElementById(tabId).classList.add("active"); button.classList.add("active"); }
-
-function loadConfig() {
-  try {
-    const x = JSON.parse(localStorage.getItem(KEY));
-    if (x && Array.isArray(x.services) && Array.isArray(x.parts)) return x;
-  } catch(e) {}
-  return {services:DEFAULT_SERVICES.map(x=>({name:x[0],price:x[1]})), parts:DEFAULT_PARTS.slice()};
-}
-function saveConfig() {
-  localStorage.setItem(KEY, JSON.stringify(config));
-}
-function render() {
-  const st = document.getElementById("services");
-  st.innerHTML = config.services.map((s,i)=>`
-    <tr><td><input class="check service-check" type="checkbox" data-i="${i}" onchange="calculate()"></td>
-    <td>${esc(s.name)}</td><td class="price">${money(s.price)}</td></tr>`).join("");
-
-  const pt = document.getElementById("parts");
-  pt.innerHTML = config.parts.map((p,i)=>`
-    <tr><td><input class="check part-check" type="checkbox" data-i="${i}" onchange="calculate()"></td>
-    <td>${esc(p)}</td>
-    <td class="price"><input class="part-price" data-i="${i}" type="number" step="0.01" min="0" placeholder="0,00" oninput="calculate()" style="max-width:150px;text-align:right"></td></tr>`).join("");
-
-  renderAdmin();
+function saveConfig(){localStorage.setItem(KEY,JSON.stringify(config))}
+function renderBudget(){
+  const st=document.getElementById("selectedServices");
+  st.innerHTML=selectedServices.length?selectedServices.map((s,i)=>`
+    <tr><td><input class="item-name-input" aria-label="Nome do serviço" type="text" value="${esc(s.name)}" onchange="editSelectedService(${i},'name',this.value)"></td>
+    <td class="price"><input class="item-price-input" aria-label="Preço do serviço" type="number" min="0" step="0.01" value="${Number(s.price).toFixed(2)}" onchange="editSelectedService(${i},'price',this.value)"></td>
+    <td><div class="actions"><button class="secondary tiny" onclick="editServiceItem(${i})">Editar</button><button class="danger tiny" onclick="removeSelectedService(${i})">Excluir</button></div></td></tr>`).join(""):`<tr><td colspan="3" class="empty">Nenhum serviço adicionado. Clique em “Adicionar serviço”.</td></tr>`;
+  const pt=document.getElementById("selectedParts");
+  pt.innerHTML=selectedParts.length?selectedParts.map((p,i)=>`
+    <tr><td><input class="item-name-input" aria-label="Nome da peça" type="text" value="${esc(p.name)}" onchange="editSelectedPart(${i},'name',this.value)"></td>
+    <td class="price"><input class="item-price-input" aria-label="Preço da peça" type="number" min="0" step="0.01" value="${p.price===""?"":Number(p.price).toFixed(2)}" placeholder="0,00" onchange="editSelectedPart(${i},'price',this.value)"></td>
+    <td><div class="actions"><button class="secondary tiny" onclick="editPartItem(${i})">Editar</button><button class="danger tiny" onclick="removeSelectedPart(${i})">Excluir</button></div></td></tr>`).join(""):`<tr><td colspan="3" class="empty">Nenhuma peça adicionada. Clique em “Adicionar peça”.</td></tr>`;
   calculate();
 }
-function calculate() {
-  let serviceTotal=0, partTotal=0;
-  document.querySelectorAll(".service-check:checked").forEach(el => serviceTotal += Number(config.services[el.dataset.i].price)||0);
-  document.querySelectorAll(".part-check:checked").forEach(el => {
-    const inp = document.querySelector(`.part-price[data-i="${el.dataset.i}"]`);
-    partTotal += Number(inp?.value)||0;
-  });
+function calculate(){
+  const serviceTotal=selectedServices.reduce((sum,s)=>sum+(Number(s.price)||0),0);
+  const partTotal=selectedParts.reduce((sum,p)=>sum+(Number(p.price)||0),0);
   document.getElementById("serviceTotal").textContent=money(serviceTotal);
   document.getElementById("partTotal").textContent=money(partTotal);
   const placa=document.getElementById("placa").value.trim().toUpperCase();
   const km=document.getElementById("km").value.trim();
-
-  let lines=[];
-  lines.push("*VICENTE MACHADO*");
-  if (placa) lines.push("Placa: "+placa);
-  else lines.push("Placa:");
-  if (km) lines.push("KM: "+km);
-  else lines.push("KM:");
-  lines.push("");
-
-  document.querySelectorAll(".service-check:checked").forEach(el=>{
-    const s=config.services[el.dataset.i];
-    lines.push(`_${s.name}: ${money(s.price)}_`);
-  });
-  lines.push(`*Serviços: ${money(serviceTotal)}*`);
-  lines.push("");
-
-  document.querySelectorAll(".part-check:checked").forEach(el=>{
-    const i=Number(el.dataset.i), p=config.parts[i];
-    const inp=document.querySelector(`.part-price[data-i="${i}"]`);
-    lines.push(`_${p}: ${money(Number(inp?.value)||0)}_`);
-  });
-  lines.push(`*Peças: ${money(partTotal)}*`);
-  lines.push("");
-  lines.push(`*TOTAL: ${money(serviceTotal+partTotal)}*`);
+  const lines=["VICENTE MACHADO",`Placa: ${placa}`,`KM: ${km}`,""];
+  selectedServices.forEach(s=>lines.push(`${s.name}: ${money(s.price)}`));
+  lines.push(`Serviços: ${money(serviceTotal)}`,"");
+  selectedParts.forEach(p=>lines.push(`${p.name}: ${money(p.price)}`));
+  lines.push(`Peças: ${money(partTotal)}`,"",`TOTAL: ${money(serviceTotal+partTotal)}`);
   document.getElementById("output").value=lines.join("\n");
 }
-function renderAdmin() {
-  document.getElementById("adminServices").innerHTML=config.services.map((s,i)=>`
-    <div class="admin-item">
-      <input value="${esc(s.name)}" oninput="editService(${i},'name',this.value)">
-      <input type="number" step="0.01" value="${Number(s.price).toFixed(2)}" oninput="editService(${i},'price',this.value)">
-      <button class="danger" onclick="removeService(${i})">×</button>
-    </div>`).join("");
-  document.getElementById("adminParts").innerHTML=config.parts.map((p,i)=>`
-    <div class="admin-item">
-      <input value="${esc(p)}" oninput="editPart(${i},this.value)">
-      <span></span><button class="danger" onclick="removePart(${i})">×</button>
-    </div>`).join("");
+function openPicker(type){
+  pickerType=type;
+  document.getElementById("pickerTitle").textContent=type==="service"?"Adicionar serviço":"Adicionar peça";
+  document.getElementById("pickerHint").textContent=type==="service"?"Selecione um serviço do cadastro. O preço poderá ser ajustado somente neste orçamento.":"Selecione uma peça do cadastro e informe o preço deste orçamento na tabela principal.";
+  document.getElementById("catalogSearch").value="";
+  document.getElementById("pickerBackdrop").classList.add("open");
+  renderPicker();
+  setTimeout(()=>document.getElementById("catalogSearch").focus(),30);
 }
-function editService(i,k,v) { config.services[i][k]=k==="price"?(Number(v)||0):v; saveConfig(); render(); }
-function editPart(i,v) { config.parts[i]=v; saveConfig(); render(); }
-function addService() { config.services.push({name:"Novo serviço",price:0}); saveConfig(); render(); }
-function addPart() { config.parts.push("Nova peça"); saveConfig(); render(); }
-function removeService(i) { if(confirm("Remover este serviço do cadastro?")) {config.services.splice(i,1);saveConfig();render();} }
-function removePart(i) { if(confirm("Remover esta peça do cadastro?")) {config.parts.splice(i,1);saveConfig();render();} }
-function resetBudget() {
-  document.getElementById("placa").value="";
-  document.getElementById("km").value="";
-  budgetPartPrices={};
-  render();
+function closePicker(){document.getElementById("pickerBackdrop").classList.remove("open")}
+function backdropClose(e){if(e.target.id==="pickerBackdrop")closePicker()}
+function renderPicker(){
+  const query=document.getElementById("catalogSearch").value.trim().toLocaleLowerCase("pt-BR");
+  const list=document.getElementById("pickerList");
+  const catalog=pickerType==="service"?config.services:config.parts;
+  const rows=catalog.map((item,index)=>({item,index,name:pickerType==="service"?item.name:item}))
+    .filter(x=>x.name.toLocaleLowerCase("pt-BR").includes(query));
+  if(!rows.length){list.innerHTML='<div class="empty">Nenhum item encontrado para essa pesquisa.</div>';return}
+  list.innerHTML=rows.map(({item,index,name})=>{
+    const already=pickerType==="service"?selectedServices.some(x=>x.catalogIndex===index):selectedParts.some(x=>x.catalogIndex===index);
+    const detail=pickerType==="service"?money(item.price):"Preço informado por orçamento";
+    return `<div class="catalog-row"><div><div class="catalog-name">${esc(name)}</div><div class="catalog-meta">${esc(detail)}</div></div><button class="${already?'secondary':'primary'} tiny" ${already?'disabled':''} onclick="addFromCatalog(${index})">${already?'Adicionado':'Adicionar'}</button></div>`;
+  }).join("");
 }
-function restoreDefaults() {
-  if(!confirm("Restaurar os serviços e peças originais? As alterações no cadastro serão perdidas.")) return;
+function addFromCatalog(index){
+  if(pickerType==="service"){
+    if(selectedServices.some(x=>x.catalogIndex===index))return;
+    const s=config.services[index];selectedServices.push({id:makeId(),catalogIndex:index,name:s.name,price:Number(s.price)||0});
+  }else{
+    if(selectedParts.some(x=>x.catalogIndex===index))return;
+    selectedParts.push({id:makeId(),catalogIndex:index,name:config.parts[index],price:""});
+  }
+  renderBudget();renderPicker();
+}
+function editSelectedService(i,key,value){
+  if(key==="name")selectedServices[i].name=value;
+  else selectedServices[i].price=Math.max(0,Number(value)||0);
+  calculate();
+}
+function editSelectedPart(i,key,value){
+  if(key==="name")selectedParts[i].name=value;
+  else selectedParts[i].price=value===""?"":Math.max(0,Number(value)||0);
+  calculate();
+}
+function editServiceItem(i){
+  const s=selectedServices[i];
+  const name=prompt("Nome do serviço neste orçamento:",s.name);if(name===null)return;
+  const price=prompt("Preço do serviço neste orçamento (ex.: 92,00):",String(s.price).replace(".",","));
+  s.name=name.trim()||s.name;
+  if(price!==null){const parsed=Number(price.trim().replace(/\./g,"").replace(",", "."));if(Number.isFinite(parsed)&&parsed>=0)s.price=parsed}
+  renderBudget();
+}
+function editPartItem(i){
+  const p=selectedParts[i];
+  const name=prompt("Nome da peça neste orçamento:",p.name);if(name===null)return;
+  const price=prompt("Preço da peça neste orçamento (ex.: 39,70):",p.price===""?"":String(p.price).replace(".",","));
+  p.name=name.trim()||p.name;
+  if(price!==null){const parsed=Number(price.trim().replace(/\./g,"").replace(",", "."));if(price.trim()==="")p.price="";else if(Number.isFinite(parsed)&&parsed>=0)p.price=parsed}
+  renderBudget();
+}
+function removeSelectedService(i){selectedServices.splice(i,1);renderBudget();if(document.getElementById("pickerBackdrop").classList.contains("open"))renderPicker()}
+function removeSelectedPart(i){selectedParts.splice(i,1);renderBudget();if(document.getElementById("pickerBackdrop").classList.contains("open"))renderPicker()}
+function renderAdmin(){
+  document.getElementById("adminServices").innerHTML=config.services.map((s,i)=>`<div class="admin-item"><input aria-label="Nome do serviço no cadastro" value="${esc(s.name)}" oninput="editService(${i},'name',this.value)"><input aria-label="Preço fixo do serviço" type="number" min="0" step="0.01" value="${Number(s.price).toFixed(2)}" oninput="editService(${i},'price',this.value)"><button class="danger" onclick="removeService(${i})">×</button></div>`).join("");
+  document.getElementById("adminParts").innerHTML=config.parts.map((p,i)=>`<div class="admin-item"><input aria-label="Nome da peça no cadastro" value="${esc(p)}" oninput="editPart(${i},this.value)"><span></span><button class="danger" onclick="removePart(${i})">×</button></div>`).join("");
+}
+function editService(i,key,value){
+  const oldName=config.services[i].name;config.services[i][key]=key==="price"?(Number(value)||0):value;saveConfig();
+  if(key==="name")selectedServices.filter(x=>x.catalogIndex===i&&x.name===oldName).forEach(x=>x.name=value);
+  if(key==="price")selectedServices.filter(x=>x.catalogIndex===i).forEach(x=>x.price=Number(value)||0);
+  renderBudget();if(document.getElementById("pickerBackdrop").classList.contains("open"))renderPicker();
+}
+function editPart(i,value){
+  const oldName=config.parts[i];config.parts[i]=value;saveConfig();
+  selectedParts.filter(x=>x.catalogIndex===i&&x.name===oldName).forEach(x=>x.name=value);
+  if(document.getElementById("pickerBackdrop").classList.contains("open"))renderPicker();
+}
+function addService(){config.services.push({name:"Novo serviço",price:0});saveConfig();renderAdmin()}
+function addPart(){config.parts.push("Nova peça");saveConfig();renderAdmin()}
+function removeService(i){
+  if(!confirm("Remover este serviço do cadastro?"))return;
+  config.services.splice(i,1);selectedServices=selectedServices.filter(x=>x.catalogIndex!==i).map(x=>({...x,catalogIndex:x.catalogIndex>i?x.catalogIndex-1:x.catalogIndex}));
+  saveConfig();renderAdmin();renderBudget();if(document.getElementById("pickerBackdrop").classList.contains("open"))renderPicker();
+}
+function removePart(i){
+  if(!confirm("Remover esta peça do cadastro?"))return;
+  config.parts.splice(i,1);selectedParts=selectedParts.filter(x=>x.catalogIndex!==i).map(x=>({...x,catalogIndex:x.catalogIndex>i?x.catalogIndex-1:x.catalogIndex}));
+  saveConfig();renderAdmin();renderBudget();if(document.getElementById("pickerBackdrop").classList.contains("open"))renderPicker();
+}
+function resetBudget(){
+  if((selectedServices.length||selectedParts.length||document.getElementById("placa").value||document.getElementById("km").value)&&!confirm("Limpar os dados e os itens deste orçamento?"))return;
+  document.getElementById("placa").value="";document.getElementById("km").value="";
+  selectedServices=[];selectedParts=[];renderBudget();
+}
+function restoreDefaults(){
+  if(!confirm("Restaurar os serviços e peças originais? As alterações no cadastro serão perdidas."))return;
   config={services:DEFAULT_SERVICES.map(x=>({name:x[0],price:x[1]})),parts:DEFAULT_PARTS.slice()};
-  saveConfig(); render();
+  selectedServices=[];selectedParts=[];saveConfig();renderAdmin();renderBudget();
 }
-function copyOutput() {
+function copyOutput(){
   const text=document.getElementById("output").value;
-  navigator.clipboard.writeText(text).then(()=>{
-    document.getElementById("copyStatus").textContent="Relatório copiado para a área de transferência.";
-    setTimeout(()=>document.getElementById("copyStatus").textContent="",2500);
-  }).catch(()=>{ document.getElementById("output").select(); document.execCommand("copy"); });
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(showCopied).catch(()=>fallbackCopy(text));
+  }else fallbackCopy(text);
 }
-function exportConfig() {
+function showCopied(){document.getElementById("copyStatus").textContent="Relatório copiado para a área de transferência.";setTimeout(()=>document.getElementById("copyStatus").textContent="",2500)}
+function fallbackCopy(text){
+  const out=document.getElementById("output");out.focus();out.select();
+  try{const ok=document.execCommand("copy");if(ok)showCopied();else document.getElementById("copyStatus").textContent="Selecione o texto do relatório e copie manualmente."}catch(e){document.getElementById("copyStatus").textContent="Selecione o texto do relatório e copie manualmente."}
+}
+function exportConfig(){
   const blob=new Blob([JSON.stringify(config,null,2)],{type:"application/json"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob); a.download="configuracao-orcamentos.json"; a.click();
-  URL.revokeObjectURL(a.href);
+  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="configuracao-orcamentos.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-function importConfig(event) {
-  const file=event.target.files[0]; if(!file) return;
+function importConfig(event){
+  const file=event.target.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=()=>{
-    try {
+    try{
       const x=JSON.parse(reader.result);
-      if(!Array.isArray(x.services)||!Array.isArray(x.parts)) throw new Error();
-      config=x; saveConfig(); render(); alert("Configuração importada com sucesso.");
-    } catch(e) { alert("Arquivo de configuração inválido."); }
+      if(!Array.isArray(x.services)||!Array.isArray(x.parts)||!x.services.every(s=>s&&typeof s.name==="string"&&Number.isFinite(Number(s.price)))||!x.parts.every(p=>typeof p==="string"))throw new Error();
+      config={services:x.services.map(s=>({name:s.name,price:Number(s.price)})),parts:x.parts.slice()};
+      selectedServices=[];selectedParts=[];saveConfig();renderAdmin();renderBudget();alert("Configuração importada com sucesso.");
+    }catch(e){alert("Arquivo de configuração inválido. Verifique se contém as listas services e parts.")}
+    event.target.value="";
   };
   reader.readAsText(file);
 }
-document.getElementById("placa").addEventListener("input",calculate);
+document.getElementById("placa").addEventListener("input",e=>{e.target.value=e.target.value.toUpperCase();calculate()});
 document.getElementById("km").addEventListener("input",calculate);
-render();
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closePicker()});
+renderAdmin();renderBudget();
 </script>
 </body>
 </html>
